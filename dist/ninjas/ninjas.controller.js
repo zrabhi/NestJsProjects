@@ -27,7 +27,12 @@ let NinjasController = exports.NinjasController = class NinjasController {
     }
     GetOneNinjasUser(id) {
         console.log("In Get Request");
-        return this.ninjasService.getNinja(+id);
+        try {
+            return this.ninjasService.getNinja(+id);
+        }
+        catch (err) {
+            throw new common_1.NotFoundException;
+        }
     }
     CreateNinjasUser(createNinjaDto) {
         console.log("In Post Request");

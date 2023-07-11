@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -22,7 +23,12 @@ export class NinjasController {
   @Get(":id")
   GetOneNinjasUser(@Param("id") id: string) {
     console.log("In Get Request");
+    try {
     return this.ninjasService.getNinja(+id);
+    } catch (err) 
+    {
+      throw new NotFoundException;
+    }
   }
   @Post()
   CreateNinjasUser(@Body() createNinjaDto: CreateNinjaDto) {
