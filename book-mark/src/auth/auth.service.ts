@@ -6,9 +6,15 @@ import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { error } from 'console';
 import { threadId } from 'worker_threads';
+import { JwtService } from '@nestjs/jwt';
+import {ConfigService} from '@nestjs/config'
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwt: JwtService,
+    private readonly config: ConfigService
+  ) {}
   async signup(body: AuthDto) {
     // hashing the password
     const hash = await argon.hash(body.password);
@@ -40,6 +46,18 @@ export class AuthService {
 
     const MATCHES = await argon.verify(user.hash, body.password);
     if (!MATCHES) throw new ForbiddenException('Credentials Not Correct');
-    return 'I HAVE SIGN IN';
+    return this.signToken(user.id, user.email);
+  }
+  async signToken(UserId: number, email:string)
+  {
+      const playload = {
+        sub: UserId,
+        email,
+      };
+      return this.jwt.signAsync(playload, {
+          expiresIn: '15m',
+          secret: this.config.get('JWT_SECRET'),
+      })
+
   }
 }
