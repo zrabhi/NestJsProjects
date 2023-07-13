@@ -54,10 +54,12 @@ export class AuthService {
         sub: UserId,
         email,
       };
-      return this.jwt.signAsync(playload, {
+      const token = await this.jwt.signAsync(playload, {
           expiresIn: '15m',
           secret: this.config.get('JWT_SECRET'),
       })
-
+      return {
+        access_token: token,
+      }
   }
 }
