@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { User, Bookmark } from '@prisma/client';
+// import { User, Bookmark } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
@@ -23,6 +23,7 @@ export class AuthService {
         email: body.email,
         hash,
       },
+
     };
     try {
       const user = await this.prisma.user.create(NewUser);
@@ -30,7 +31,7 @@ export class AuthService {
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {
         if (err.code === 'P2002')
-          // this erro stands for trying to duplicate a unique field in Prisma
+          // this err stands for trying to duplicate a unique field in Prisma
           throw new ForbiddenException('Credentials Taken');
       }
       throw err;
